@@ -1,14 +1,23 @@
 import Head from "next/head";
+import React, { useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { Container, Box, Grid, Button } from "@material-ui/core";
-import MIDISounds from "midi-sounds-react";
+
+const MIDISounds = dynamic(() => import("midi-sounds-react"), { ssr: false });
 
 export default function Home() {
+	let midiSounds;
 	function playNote() {
-		midiSounds.playChordNow(3, [60], 2.5);
+		midiSounds.retry();
+		//midiSounds.playChordNow(3, [60], 2.5);
 	}
 
+	useEffect(() => {
+		console.log("hi", midiSounds);
+	}, [midiSounds]);
+
 	return (
-		<div className="root">
+		<div className="root" id="root">
 			<Container>
 				<Box
 					display="flex"
@@ -42,7 +51,10 @@ export default function Home() {
 				</Box>
 			</Container>
 			<MIDISounds
-				ref={(ref) => (midiSounds = ref)}
+				ref={(ref) => {
+					console.log("hello", ref);
+					midiSounds = ref;
+				}}
 				appElementName="root"
 				instruments={[3]}
 			/>
