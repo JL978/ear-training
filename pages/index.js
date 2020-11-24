@@ -1,24 +1,13 @@
-import Head from "next/head";
-import React, { useRef, useEffect } from "react";
-import dynamic from "next/dynamic";
+import React from "react";
 import { Container, Box, Grid, Button } from "@material-ui/core";
+import usePiano from "./hooks/usePiano";
 
-//const MIDISounds = dynamic(() => import("midi-sounds-react"), { ssr: false });
-import { instrument } from "soundfont-player";
-
+const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
 export default function Home() {
-	let pianoRef = useRef(null);
+	const piano = usePiano();
 
-	useEffect(() => {
-		instrument(new AudioContext(), "acoustic_grand_piano", {
-			soundfont: "MusyngKite",
-		}).then((piano) => {
-			pianoRef.current = piano;
-		});
-	}, []);
-
-	function playNote() {
-		pianoRef.current.play("C4");
+	function playNote(note) {
+		piano.play(note);
 	}
 
 	return (
@@ -36,21 +25,19 @@ export default function Home() {
 					justify="center"
 					alignItems="center"
 				>
-					<Grid item>
-						<Button onClick={playNote} variant="outlined" color="primary">
-							A
-						</Button>
-					</Grid>
-					<Grid item>
-						<Button variant="outlined" color="primary">
-							B
-						</Button>
-					</Grid>
-					<Grid item>
-						<Button variant="outlined" color="primary">
-							C
-						</Button>
-					</Grid>
+					{notes.map((note) => {
+						return (
+							<Grid item>
+								<Button
+									onClick={() => playNote(note)}
+									variant="outlined"
+									color="primary"
+								>
+									{note}
+								</Button>
+							</Grid>
+						);
+					})}
 				</Grid>
 			</Box>
 		</Container>
