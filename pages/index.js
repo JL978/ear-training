@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Box, Grid, Button } from "@material-ui/core";
+// import dynamic from 'next/dynamic'
+// const usePiano = dynamic(() => import('./hooks/usePiano'))
 import usePiano from "./hooks/usePiano";
 
 const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
 export default function Home() {
-	const piano = usePiano();
+	let { piano, resume } = usePiano();
 
-	function playNote(note) {
-		piano.play(note);
+	// useEffect(() => {
+	// 	console.log(usePiano);
+	// 	piano = usePiano();
+	// }, []);
+
+	async function playNote(note) {
+		console.log(piano);
+		if (!piano) {
+			resume.then(() => piano.play(note)).catch((err) => console.log(err));
+		} else {
+			piano.play(note);
+		}
 	}
 
 	return (
@@ -27,7 +39,7 @@ export default function Home() {
 				>
 					{notes.map((note) => {
 						return (
-							<Grid item>
+							<Grid item key={note}>
 								<Button
 									onClick={() => playNote(note)}
 									variant="outlined"
