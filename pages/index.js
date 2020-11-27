@@ -1,25 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Container, Box, Grid, Button } from "@material-ui/core";
 // import dynamic from 'next/dynamic'
 // const usePiano = dynamic(() => import('./hooks/usePiano'))
-import usePiano from "./hooks/usePiano";
+
+import { instrument } from "soundfont-player";
 
 const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
 export default function Home() {
-	let { piano, resume } = usePiano();
+	const pianoRef = useRef(null);
+	let ac;
 
-	// useEffect(() => {
-	// 	console.log(usePiano);
-	// 	piano = usePiano();
-	// }, []);
+	useEffect(() => {
+		ac = new AudioContext();
+		instrument(ac, "acoustic_grand_piano", {
+			soundfont: "MusyngKite",
+		}).then((piano) => {
+			pianoRef.current = piano;
+		});
+	}, []);
 
 	async function playNote(note) {
-		console.log(piano);
-		if (!piano) {
-			resume.then(() => piano.play(note)).catch((err) => console.log(err));
-		} else {
-			piano.play(note);
-		}
+		pianoRef.current.play(36);
 	}
 
 	return (
