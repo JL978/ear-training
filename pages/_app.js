@@ -24,19 +24,17 @@ function MyApp({ Component, pageProps }) {
 	return (
 		<Box display="flex" height="100vh" flexDirection="column">
 			<AppBar position="static">
-				<Container>
-					<Toolbar>
-						<Typography variant="h6" className={classes.title}>
-							Ear Sharp
-						</Typography>
-						<Button onClick={() => router.push("/about")} color="inherit">
-							About
-						</Button>
-						<Button onClick={() => router.push("/login")} color="inherit">
-							Login
-						</Button>
-					</Toolbar>
-				</Container>
+				<Toolbar>
+					<Typography variant="h6" className={classes.title}>
+						Ear Sharp
+					</Typography>
+					<Button onClick={() => router.push("/about")} color="inherit">
+						About
+					</Button>
+					<Button onClick={() => router.push("/login")} color="inherit">
+						Login
+					</Button>
+				</Toolbar>
 			</AppBar>
 			<Component {...pageProps} />
 		</Box>
