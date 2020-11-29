@@ -24,13 +24,13 @@ export default function Home() {
 	}
 
 	return (
-		<Container>
-			<Box
-				display="flex"
-				height="100vh"
-				justifyContent="center"
-				alignItems="center"
-			>
+		<Box
+			flexGrow={1}
+			display="flex"
+			justifyContent="center"
+			alignItems="center"
+		>
+			<Container>
 				<Grid
 					container
 					direction="row"
@@ -52,7 +52,7 @@ export default function Home() {
 						);
 					})}
 				</Grid>
-			</Box>
-		</Container>
+			</Container>
+		</Box>
 	);
 }
