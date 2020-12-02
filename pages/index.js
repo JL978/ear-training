@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Container, Box, Grid, Button } from "@material-ui/core";
-// import dynamic from 'next/dynamic'
-// const usePiano = dynamic(() => import('./hooks/usePiano'))
+import useIntervalTrainer from "./hooks/useIntervalTrainer";
 
 import { instrument } from "soundfont-player";
 
@@ -9,6 +8,8 @@ const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
 export default function Home() {
 	const pianoRef = useRef(null);
 	let ac;
+
+	const { semitones, semitonesChoices } = useIntervalTrainer();
 
 	useEffect(() => {
 		ac = new AudioContext();
@@ -38,16 +39,18 @@ export default function Home() {
 					justify="center"
 					alignItems="center"
 				>
-					{notes.map((note) => {
+					{semitones.map((semitone, index) => {
 						return (
-							<Grid item key={note}>
-								<Button
-									onClick={() => playNote(note)}
-									variant="outlined"
-									color="primary"
-								>
-									{note}
-								</Button>
+							<Grid item key={semitone}>
+								{semitonesChoices.includes(index + 1) ? (
+									<Button variant="contained" color="primary">
+										{semitone}
+									</Button>
+								) : (
+									<Button variant="outlined" color="primary">
+										{semitone}
+									</Button>
+								)}
 							</Grid>
 						);
 					})}
