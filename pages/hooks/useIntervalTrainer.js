@@ -35,16 +35,12 @@ export default function useIntervalTrainer() {
 
 	function newInterval() {
 		const randomIndex = Math.floor(Math.random() * semitonesChoices.length);
-		const randChoice = semitonesChoices[randomIndex];
+		const randomSemitone = semitonesChoices[randomIndex];
 
-		const randomMidiNumber = 35 + Math.floor(Math.random() * 36);
-		setCurrentInterval([randomMidiNumber, randomMidiNumber + randChoice]);
-		console.log([randomMidiNumber, randomMidiNumber + randChoice]);
+		const firstNote = 35 + Math.floor(Math.random() * 36);
+		const secondNote = firstNote + randomSemitone;
+		setCurrentInterval([firstNote, secondNote]);
 	}
-
-	// useEffect(() => {
-	// 	console.log(currentInterval);
-	// }, [currentInterval]);
 
 	return {
 		score,

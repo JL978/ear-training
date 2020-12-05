@@ -25,24 +25,51 @@ const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
 export default function Home() {
 	const classes = useStyles();
 	const pianoRef = useRef(null);
-	let ac;
+	const playingRef = useRef(null);
+	const timerRef = useRef(null);
+	const acRef = useRef(null);
 
-	const { semitones, semitonesChoices, newInterval } = useIntervalTrainer();
+	const {
+		semitones,
+		semitonesChoices,
+		currentInterval,
+		newInterval,
+	} = useIntervalTrainer();
 
 	useEffect(() => {
-		ac = new AudioContext();
-		instrument(ac, "acoustic_grand_piano", {
+		acRef.current = new AudioContext();
+		instrument(acRef.current, "acoustic_grand_piano", {
 			soundfont: "MusyngKite",
 		}).then((piano) => {
 			pianoRef.current = piano;
 		});
+		newInterval();
 	}, []);
 
 	useEffect(() => {
-		for (let i = 0; i < 100; i++) {
-			newInterval();
+		playTest();
+	}, [currentInterval]);
+
+	async function playTest() {
+		if (playingRef.current) {
+			playingRef.current.stop();
 		}
-	}, []);
+		if (timerRef.current) {
+			clearTimeout(timerRef.current);
+		}
+		if (!pianoRef.current) {
+			await acRef.current.resume();
+		}
+		playingRef.current = pianoRef.current.play(currentInterval[0], 2, {
+			duration: 0.9,
+		});
+
+		timerRef.current = setTimeout(() => {
+			pianoRef.current.play(currentInterval[1], 2, {
+				duration: 0.9,
+			});
+		}, 700);
+	}
 
 	return (
 		<Box
@@ -63,6 +90,7 @@ export default function Home() {
 						variant="contained"
 						color="secondary"
 						startIcon={<PlayArrowIcon />}
+						onClick={playTest}
 					>
 						Hear Again
 					</Button>
