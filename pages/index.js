@@ -27,7 +27,7 @@ export default function Home() {
 	const pianoRef = useRef(null);
 	let ac;
 
-	const { semitones, semitonesChoices } = useIntervalTrainer();
+	const { semitones, semitonesChoices, newInterval } = useIntervalTrainer();
 
 	useEffect(() => {
 		ac = new AudioContext();
@@ -36,6 +36,12 @@ export default function Home() {
 		}).then((piano) => {
 			pianoRef.current = piano;
 		});
+	}, []);
+
+	useEffect(() => {
+		for (let i = 0; i < 100; i++) {
+			newInterval();
+		}
 	}, []);
 
 	return (
@@ -74,9 +80,9 @@ export default function Home() {
 					justifyContent="center"
 					className={classes.gameChoices}
 				>
-					{semitonesChoices.map((choice) => {
+					{semitonesChoices.map((choice, index) => {
 						return (
-							<Button variant="outlined" color="default">
+							<Button key={index} variant="outlined" color="default">
 								{semitones[choice - 1]}
 							</Button>
 						);

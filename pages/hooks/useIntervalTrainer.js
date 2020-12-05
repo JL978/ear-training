@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const semitones = [
 	"Minor 2nd",
@@ -30,8 +30,21 @@ export default function useIntervalTrainer() {
 		fixedRoot: false,
 		numberOfInvtervals: 1,
 	});
-
+	const [currentInterval, setCurrentInterval] = useState([]);
 	const [semitonesChoices, setSemitoneChoices] = useState([4, 7, 12]);
+
+	function newInterval() {
+		const randomIndex = Math.floor(Math.random() * semitonesChoices.length);
+		const randChoice = semitonesChoices[randomIndex];
+
+		const randomMidiNumber = 35 + Math.floor(Math.random() * 36);
+		setCurrentInterval([randomMidiNumber, randomMidiNumber + randChoice]);
+		console.log([randomMidiNumber, randomMidiNumber + randChoice]);
+	}
+
+	// useEffect(() => {
+	// 	console.log(currentInterval);
+	// }, [currentInterval]);
 
 	return {
 		score,
@@ -40,5 +53,7 @@ export default function useIntervalTrainer() {
 		semitonesChoices,
 		semitones,
 		intervalOrderChoices,
+		currentInterval,
+		newInterval,
 	};
 }
