@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useIntervalTrainer from "./hooks/useIntervalTrainer";
 
 import { Container, Box, Grid, Button, Typography } from "@material-ui/core";
@@ -23,50 +23,52 @@ const useStyles = makeStyles((theme) => ({
 
 const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
 export default function Home() {
+	const [isTraining, setIsTraining] = useState(false);
 	const classes = useStyles();
 	const pianoRef = useRef(null);
-	const playingRef = useRef(null);
 	const timerRef = useRef(null);
 	const acRef = useRef(null);
 
 	const {
-		semitones,
 		semitonesChoices,
-		currentInterval,
+		currentNotes,
+		currentIntervals,
 		newInterval,
+		intervalSelectionToggle,
 	} = useIntervalTrainer();
 
-	useEffect(() => {
+	async function init() {
 		acRef.current = new AudioContext();
 		instrument(acRef.current, "acoustic_grand_piano", {
 			soundfont: "MusyngKite",
 		}).then((piano) => {
 			pianoRef.current = piano;
+			if (!isTraining) {
+				setIsTraining(true);
+			}
 		});
 		newInterval();
-	}, []);
-
-	useEffect(() => {
-		playTest();
-	}, [currentInterval]);
+	}
 
 	async function playTest() {
-		if (playingRef.current) {
-			playingRef.current.stop();
+		if (!acRef.current) {
+			await init();
+		}
+
+		if (pianoRef.current) {
+			pianoRef.current.stop();
 		}
 		if (timerRef.current) {
 			clearTimeout(timerRef.current);
 		}
-		if (!pianoRef.current) {
-			await acRef.current.resume();
-		}
-		playingRef.current = pianoRef.current.play(currentInterval[0], 2, {
-			duration: 0.9,
+
+		pianoRef.current.play(currentNotes[0], 2, {
+			duration: 0.8,
 		});
 
 		timerRef.current = setTimeout(() => {
-			pianoRef.current.play(currentInterval[1], 2, {
-				duration: 0.9,
+			pianoRef.current.play(currentNotes[1], 2, {
+				duration: 0.8,
 			});
 		}, 700);
 	}
@@ -81,67 +83,73 @@ export default function Home() {
 		>
 			<Container>
 				<Typography variant="h3">Interval Training</Typography>
-				<Box
-					display="flex"
-					justifyContent="center"
-					className={classes.gameChoices}
-				>
-					<Button
-						variant="contained"
-						color="secondary"
-						startIcon={<PlayArrowIcon />}
-						onClick={playTest}
-					>
-						Hear Again
+				{!isTraining ? (
+					<Button variant="contained" color="secondary" onClick={init}>
+						Start Training
 					</Button>
-					<Button
-						variant="outlined"
-						color="secondary"
-						endIcon={<ArrowForwardIcon />}
-					>
-						Skip
-					</Button>
-				</Box>
-				<Typography variant="h5">Pick your answer</Typography>
-				<Box
-					display="flex"
-					justifyContent="center"
-					className={classes.gameChoices}
-				>
-					{semitonesChoices.map((choice, index) => {
-						return (
-							<Button key={index} variant="outlined" color="default">
-								{semitones[choice - 1]}
+				) : (
+					<>
+						<Box
+							display="flex"
+							justifyContent="center"
+							className={classes.gameChoices}
+						>
+							<Button
+								variant="contained"
+								color="secondary"
+								startIcon={<PlayArrowIcon />}
+								onClick={playTest}
+							>
+								Hear Again
 							</Button>
-						);
-					})}
-				</Box>
-				<Typography variant="h4" className={classes.setting}>
-					Settings
-				</Typography>
-				<Grid
-					container
-					direction="row"
-					spacing={1}
-					justify="center"
-					alignItems="center"
-				>
-					{semitones.map((semitone, index) => {
-						return (
-							<Grid item key={semitone}>
-								{semitonesChoices.includes(index + 1) ? (
-									<Button variant="contained" color="primary">
-										{semitone}
+							<Button
+								variant="outlined"
+								color="secondary"
+								endIcon={<ArrowForwardIcon />}
+							>
+								Skip
+							</Button>
+						</Box>
+						<Typography variant="h5">Pick your answer</Typography>
+						<Box
+							display="flex"
+							justifyContent="center"
+							className={classes.gameChoices}
+						>
+							{currentIntervals.map(({ name }, index) => {
+								return (
+									<Button key={index} variant={"outlined"} color="default">
+										{name}
 									</Button>
-								) : (
-									<Button variant="outlined" color="primary">
-										{semitone}
-									</Button>
-								)}
-							</Grid>
-						);
-					})}
-				</Grid>
+								);
+							})}
+						</Box>
+						<Typography variant="h4" className={classes.setting}>
+							Settings
+						</Typography>
+						<Grid
+							container
+							direction="row"
+							spacing={1}
+							justify="center"
+							alignItems="center"
+						>
+							{semitonesChoices.map(({ name, semitone, selected }, index) => {
+								return (
+									<Grid item key={semitone}>
+										<Button
+											variant={selected ? "contained" : "outlined"}
+											color="primary"
+											onClick={() => intervalSelectionToggle(index)}
+										>
+											{name}
+										</Button>
+									</Grid>
+								);
+							})}
+						</Grid>
+					</>
+				)}
 			</Container>
 		</Box>
 	);

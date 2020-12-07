@@ -1,21 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-const semitones = [
-	"Minor 2nd",
-	"Major 2nd",
-	"Minor 3rd",
-	"Major 3rd",
-	"Perfect 4th",
-	"Tritone",
-	"Perfect 5th",
-	"Minor 6th",
-	"Major 6th",
-	"Minor 7th",
-	"Major 7th",
-	"Octave",
-	"Minor 9th",
-	"Major 9th",
-];
 const intervalOrderChoices = [
 	"ascending",
 	"descending",
@@ -30,16 +14,45 @@ export default function useIntervalTrainer() {
 		fixedRoot: false,
 		numberOfInvtervals: 1,
 	});
-	const [currentInterval, setCurrentInterval] = useState([]);
-	const [semitonesChoices, setSemitoneChoices] = useState([4, 7, 12]);
+	const [currentNotes, setCurrentNotes] = useState([]);
+	//state: nochoice || rightchoice || wrongchoice
+	const [currentIntervals, setCurrentIntervals] = useState([]);
+
+	const [semitonesChoices, setSemitoneChoices] = useState([
+		{ name: "Minor 2nd", semitone: 2, selected: false },
+		{ name: "Major 2nd", semitone: 3, selected: false },
+		{ name: "Minor 3rd", semitone: 4, selected: false },
+		{ name: "Major 3rd", semitone: 5, selected: true },
+		{ name: "Perfect 4th", semitone: 6, selected: false },
+		{ name: "Tritone", semitone: 7, selected: false },
+		{ name: "Perfect 5th", semitone: 8, selected: true },
+		{ name: "Minor 6th", semitone: 9, selected: false },
+		{ name: "Major 6th", semitone: 10, selected: false },
+		{ name: "Minor 7th", semitone: 11, selected: false },
+		{ name: "Major 7th", semitone: 12, selected: false },
+		{ name: "Octave", semitone: 13, selected: true },
+		{ name: "Minor 9th", semitone: 14, selected: false },
+		{ name: "Major 9th", semitone: 15, selected: false },
+	]);
 
 	function newInterval() {
-		const randomIndex = Math.floor(Math.random() * semitonesChoices.length);
-		const randomSemitone = semitonesChoices[randomIndex];
+		const currentChoices = semitonesChoices.filter((choice) => choice.selected);
+		setCurrentIntervals(currentChoices);
+		const randomIndex = Math.floor(Math.random() * currentChoices.length);
+		const randomSemitone = currentChoices[randomIndex].semitone;
 
 		const firstNote = 35 + Math.floor(Math.random() * 36);
 		const secondNote = firstNote + randomSemitone;
-		setCurrentInterval([firstNote, secondNote]);
+		setCurrentNotes([firstNote, secondNote]);
+	}
+
+	function intervalSelectionToggle(index) {
+		const newArr = [...semitonesChoices];
+		const choice = semitonesChoices[index];
+		const isSelected = !choice.selected;
+		const updated = { ...choice, selected: isSelected };
+		newArr.splice(index, 1, updated);
+		setSemitoneChoices(newArr);
 	}
 
 	return {
@@ -47,9 +60,10 @@ export default function useIntervalTrainer() {
 		gameChoices,
 		settings,
 		semitonesChoices,
-		semitones,
 		intervalOrderChoices,
-		currentInterval,
+		currentNotes,
+		currentIntervals,
 		newInterval,
+		intervalSelectionToggle,
 	};
 }
