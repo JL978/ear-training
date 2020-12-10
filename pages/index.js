@@ -3,6 +3,8 @@ import useIntervalTrainer from "./hooks/useIntervalTrainer";
 
 import { Container, Box, Grid, Button, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { green, red } from "@material-ui/core/colors";
 
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
@@ -21,6 +23,13 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
+const theme = createMuiTheme({
+	palette: {
+		success: green,
+		error: red,
+	},
+});
+
 const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
 export default function Home() {
 	const [isTraining, setIsTraining] = useState(false);
@@ -32,9 +41,10 @@ export default function Home() {
 	const {
 		semitonesChoices,
 		currentNotes,
-		currentIntervals,
+		currentChoices,
 		newInterval,
 		intervalSelectionToggle,
+		checkChoice,
 	} = useIntervalTrainer();
 
 	async function init() {
@@ -50,6 +60,12 @@ export default function Home() {
 		newInterval();
 	}
 
+	useEffect(() => {
+		if (currentNotes.length !== 0 && pianoRef.current) {
+			playTest();
+		}
+	}, [currentNotes, pianoRef.current]);
+
 	async function playTest() {
 		if (!acRef.current) {
 			await init();
@@ -62,7 +78,7 @@ export default function Home() {
 			clearTimeout(timerRef.current);
 		}
 
-		pianoRef.current.play(currentNotes[0], 2, {
+		await pianoRef.current.play(currentNotes[0], 2, {
 			duration: 0.8,
 		});
 
@@ -84,7 +100,7 @@ export default function Home() {
 			<Container>
 				<Typography variant="h3">Interval Training</Typography>
 				{!isTraining ? (
-					<Button variant="contained" color="secondary" onClick={init}>
+					<Button variant="contained" color="secondary" onClick={() => init()}>
 						Start Training
 					</Button>
 				) : (
@@ -106,6 +122,7 @@ export default function Home() {
 								variant="outlined"
 								color="secondary"
 								endIcon={<ArrowForwardIcon />}
+								onClick={newInterval}
 							>
 								Skip
 							</Button>
@@ -116,11 +133,25 @@ export default function Home() {
 							justifyContent="center"
 							className={classes.gameChoices}
 						>
-							{currentIntervals.map(({ name }, index) => {
+							{currentChoices.map(({ name, semitone, chosen }, index) => {
 								return (
-									<Button key={index} variant={"outlined"} color="default">
-										{name}
-									</Button>
+									<MuiThemeProvider theme={theme}>
+										<Button
+											key={index}
+											variant={"outlined"}
+											color={
+												chosen === 0
+													? "default"
+													: chosen === 1
+													? "success"
+													: "danger"
+											}
+											disabled={chosen !== 0}
+											onClick={() => checkChoice(semitone)}
+										>
+											{name}
+										</Button>
+									</MuiThemeProvider>
 								);
 							})}
 						</Box>

@@ -8,15 +8,14 @@ const intervalOrderChoices = [
 
 export default function useIntervalTrainer() {
 	const [score, setScore] = useState(0);
-	const [gameChoices, setGameChoices] = useState([]);
 	const [settings, setSettings] = useState({
 		intervalOrder: 0,
 		fixedRoot: false,
 		numberOfInvtervals: 1,
 	});
 	const [currentNotes, setCurrentNotes] = useState([]);
-	//state: nochoice || rightchoice || wrongchoice
-	const [currentIntervals, setCurrentIntervals] = useState([]);
+	//
+	const [currentChoices, setCurrentChoices] = useState([]);
 
 	const [semitonesChoices, setSemitoneChoices] = useState([
 		{ name: "Minor 2nd", semitone: 2, selected: false },
@@ -36,14 +35,38 @@ export default function useIntervalTrainer() {
 	]);
 
 	function newInterval() {
-		const currentChoices = semitonesChoices.filter((choice) => choice.selected);
-		setCurrentIntervals(currentChoices);
+		//Set the current choices
+		const currentChoices = semitonesChoices
+			.filter((choice) => choice.selected)
+			.map((choice) => ({
+				...choice,
+				chosen: 0,
+			}));
+		setCurrentChoices(currentChoices);
+
+		//Getting a random semitone value from the array of possible choices
 		const randomIndex = Math.floor(Math.random() * currentChoices.length);
 		const randomSemitone = currentChoices[randomIndex].semitone;
+		console.log(randomSemitone);
 
+		//Setting the 2 notes
 		const firstNote = 35 + Math.floor(Math.random() * 36);
-		const secondNote = firstNote + randomSemitone;
+		const secondNote = firstNote + randomSemitone - 1;
 		setCurrentNotes([firstNote, secondNote]);
+	}
+
+	function checkChoice(choice) {
+		const isCorrect = choice === currentNotes[1] - currentNotes[0] + 1;
+		setCurrentChoices((choices) => {
+			const newChoices = choices.map((_choice) => {
+				return _choice.semitone === choice
+					? { ..._choice, chosen: isCorrect ? 1 : -1 }
+					: _choice;
+			});
+			console.log(newChoices);
+			return newChoices;
+		});
+		return isCorrect;
 	}
 
 	function intervalSelectionToggle(index) {
@@ -57,13 +80,13 @@ export default function useIntervalTrainer() {
 
 	return {
 		score,
-		gameChoices,
 		settings,
 		semitonesChoices,
 		intervalOrderChoices,
 		currentNotes,
-		currentIntervals,
+		currentChoices,
 		newInterval,
 		intervalSelectionToggle,
+		checkChoice,
 	};
 }
