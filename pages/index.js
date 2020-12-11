@@ -25,8 +25,13 @@ const useStyles = makeStyles((theme) => ({
 
 const theme = createMuiTheme({
 	palette: {
-		success: green,
-		error: red,
+		type: "dark",
+		primary: {
+			main: green[300],
+		},
+		secondary: {
+			main: red[400],
+		},
 	},
 });
 
@@ -128,33 +133,33 @@ export default function Home() {
 							</Button>
 						</Box>
 						<Typography variant="h5">Pick your answer</Typography>
-						<Box
-							display="flex"
-							justifyContent="center"
-							className={classes.gameChoices}
-						>
-							{currentChoices.map(({ name, semitone, chosen }, index) => {
-								return (
-									<MuiThemeProvider theme={theme}>
+						<MuiThemeProvider theme={theme}>
+							<Box
+								display="flex"
+								justifyContent="center"
+								className={classes.gameChoices}
+							>
+								{currentChoices.map(({ name, semitone, chosen }, index) => {
+									return (
 										<Button
 											key={index}
-											variant={"outlined"}
+											variant={"contained"}
 											color={
 												chosen === 0
 													? "default"
 													: chosen === 1
-													? "success"
-													: "danger"
+													? "primary"
+													: "secondary"
 											}
-											disabled={chosen !== 0}
+											// disabled={chosen !== 0}
 											onClick={() => checkChoice(semitone)}
 										>
 											{name}
 										</Button>
-									</MuiThemeProvider>
-								);
-							})}
-						</Box>
+									);
+								})}
+							</Box>
+						</MuiThemeProvider>
 						<Typography variant="h4" className={classes.setting}>
 							Settings
 						</Typography>
