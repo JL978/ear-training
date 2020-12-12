@@ -56,6 +56,7 @@ export default function useIntervalTrainer() {
 		setCurrentNotes([firstNote, secondNote]);
 	}
 
+	//Check if current choice is correct and change the state of the user selections
 	function checkChoice(choice) {
 		const isCorrect = choice === currentNotes[1] - currentNotes[0] + 1;
 		if (isCorrect) {
@@ -67,12 +68,11 @@ export default function useIntervalTrainer() {
 					? { ..._choice, chosen: isCorrect ? 1 : -1 }
 					: _choice;
 			});
-			console.log(newChoices);
 			return newChoices;
 		});
 		return isCorrect;
 	}
-
+	//Toggle on off settings selection
 	function intervalSelectionToggle(index) {
 		const newArr = [...semitonesChoices];
 		const choice = semitonesChoices[index];

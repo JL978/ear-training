@@ -169,6 +169,7 @@ export default function Home() {
 								})}
 							</Box>
 						</MuiThemeProvider>
+						{/* next button */}
 						<Box
 							display="flex"
 							justifyContent="center"
@@ -182,6 +183,7 @@ export default function Home() {
 								Next
 							</Button>
 						</Box>
+						{/* Settings */}
 						<Typography variant="h4" className={classes.setting}>
 							Settings
 						</Typography>
