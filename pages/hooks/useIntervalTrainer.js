@@ -14,8 +14,8 @@ export default function useIntervalTrainer() {
 		numberOfInvtervals: 1,
 	});
 	const [currentNotes, setCurrentNotes] = useState([]);
-	//
 	const [currentChoices, setCurrentChoices] = useState([]);
+	const [correctChoice, setCorrectChoice] = useState(false);
 
 	const [semitonesChoices, setSemitoneChoices] = useState([
 		{ name: "Minor 2nd", semitone: 2, selected: false },
@@ -35,6 +35,7 @@ export default function useIntervalTrainer() {
 	]);
 
 	function newInterval() {
+		setCorrectChoice(false);
 		//Set the current choices
 		const currentChoices = semitonesChoices
 			.filter((choice) => choice.selected)
@@ -57,6 +58,9 @@ export default function useIntervalTrainer() {
 
 	function checkChoice(choice) {
 		const isCorrect = choice === currentNotes[1] - currentNotes[0] + 1;
+		if (isCorrect) {
+			setCorrectChoice(true);
+		}
 		setCurrentChoices((choices) => {
 			const newChoices = choices.map((_choice) => {
 				return _choice.semitone === choice
@@ -85,6 +89,7 @@ export default function useIntervalTrainer() {
 		intervalOrderChoices,
 		currentNotes,
 		currentChoices,
+		correctChoice,
 		newInterval,
 		intervalSelectionToggle,
 		checkChoice,

@@ -11,18 +11,22 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
 import { instrument } from "soundfont-player";
 
+//custom styles
 const useStyles = makeStyles((theme) => ({
+	//buttons choices
 	gameChoices: {
 		"& > *": {
 			margin: theme.spacing(2, 1),
 		},
 	},
+	//settings section
 	setting: {
 		marginTop: theme.spacing(3),
 		marginBottom: theme.spacing(2),
 	},
 }));
 
+//Custom theme for the player selection buttons, primary as correct answer and secondary as incorrect answer
 const theme = createMuiTheme({
 	palette: {
 		type: "dark",
@@ -35,10 +39,12 @@ const theme = createMuiTheme({
 	},
 });
 
-const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
 export default function Home() {
+	//Required interaction to start the training and initialize the sound player
 	const [isTraining, setIsTraining] = useState(false);
+
 	const classes = useStyles();
+
 	const pianoRef = useRef(null);
 	const timerRef = useRef(null);
 	const acRef = useRef(null);
@@ -47,11 +53,13 @@ export default function Home() {
 		semitonesChoices,
 		currentNotes,
 		currentChoices,
+		correctChoice,
 		newInterval,
 		intervalSelectionToggle,
 		checkChoice,
 	} = useIntervalTrainer();
 
+	//initialize the sound player object and store it in a ref (pianoRef)
 	async function init() {
 		acRef.current = new AudioContext();
 		instrument(acRef.current, "acoustic_grand_piano", {
@@ -65,17 +73,14 @@ export default function Home() {
 		newInterval();
 	}
 
+	//When the current notes gets changed during init or changeing questions, play the notes once
 	useEffect(() => {
 		if (currentNotes.length !== 0 && pianoRef.current) {
 			playTest();
 		}
 	}, [currentNotes, pianoRef.current]);
 
-	async function playTest() {
-		if (!acRef.current) {
-			await init();
-		}
-
+	function playTest() {
 		if (pianoRef.current) {
 			pianoRef.current.stop();
 		}
@@ -83,7 +88,7 @@ export default function Home() {
 			clearTimeout(timerRef.current);
 		}
 
-		await pianoRef.current.play(currentNotes[0], 2, {
+		pianoRef.current.play(currentNotes[0], 2, {
 			duration: 0.8,
 		});
 
@@ -133,6 +138,7 @@ export default function Home() {
 							</Button>
 						</Box>
 						<Typography variant="h5">Pick your answer</Typography>
+						{/* user selections */}
 						<MuiThemeProvider theme={theme}>
 							<Box
 								display="flex"
@@ -151,7 +157,10 @@ export default function Home() {
 													? "primary"
 													: "secondary"
 											}
-											// disabled={chosen !== 0}
+											disabled={
+												semitone !== currentNotes[1] - currentNotes[0] + 1 &&
+												correctChoice
+											}
 											onClick={() => checkChoice(semitone)}
 										>
 											{name}
@@ -160,6 +169,19 @@ export default function Home() {
 								})}
 							</Box>
 						</MuiThemeProvider>
+						<Box
+							display="flex"
+							justifyContent="center"
+							className={classes.gameChoices}
+						>
+							<Button
+								variant="contained"
+								disabled={!correctChoice}
+								onClick={newInterval}
+							>
+								Next
+							</Button>
+						</Box>
 						<Typography variant="h4" className={classes.setting}>
 							Settings
 						</Typography>
