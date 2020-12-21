@@ -1,13 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import useIntervalTrainer from "./hooks/useIntervalTrainer";
 
-import { Container, Box, Grid, Button, Typography } from "@material-ui/core";
+import {
+	Container,
+	Box,
+	Grid,
+	Button,
+	Typography,
+	Radio,
+	RadioGroup,
+	FormControlLabel,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { green, red } from "@material-ui/core/colors";
 
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+
+import { Formik } from "formik";
 
 import { instrument } from "soundfont-player";
 
@@ -23,6 +34,11 @@ const useStyles = makeStyles((theme) => ({
 	setting: {
 		marginTop: theme.spacing(3),
 		marginBottom: theme.spacing(2),
+	},
+	settingHeader: {
+		marginTop: theme.spacing(2),
+		marginBottom: theme.spacing(1),
+		fontWeight: 300,
 	},
 }));
 
@@ -54,9 +70,12 @@ export default function Home() {
 		currentNotes,
 		currentChoices,
 		correctChoice,
+		intervalProp,
+		intervalpropValues,
 		newInterval,
 		intervalSelectionToggle,
 		checkChoice,
+		setIntervalProp,
 	} = useIntervalTrainer();
 
 	//initialize the sound player object and store it in a ref (pianoRef)
@@ -187,6 +206,9 @@ export default function Home() {
 						<Typography variant="h4" className={classes.setting}>
 							Settings
 						</Typography>
+						<Typography variant="h6" className={classes.settingHeader}>
+							Select training invervals
+						</Typography>
 						<Grid
 							container
 							direction="row"
@@ -208,6 +230,31 @@ export default function Home() {
 								);
 							})}
 						</Grid>
+						<Typography variant="h6" className={classes.settingHeader}>
+							Interval Property
+						</Typography>
+						<RadioGroup
+							aria-label="interval-property"
+							name="property"
+							value={intervalProp}
+							onChange={(e) => setIntervalProp(e.target.value)}
+							style={{
+								flexDirection: "row",
+								justifyContent: "center",
+								marginTop: 0,
+							}}
+						>
+							{intervalpropValues.map(({ value, label }) => {
+								return (
+									<FormControlLabel
+										key={value}
+										value={value}
+										control={<Radio />}
+										label={label}
+									/>
+								);
+							})}
+						</RadioGroup>
 					</>
 				)}
 			</Container>
