@@ -54,22 +54,22 @@ export default function useIntervalTrainer() {
 
 		//Setting the 2 notes
 		const firstNote = 35 + Math.floor(Math.random() * 36);
-		let multiplier;
+		let secondNote;
 		if (intervalProp === "ascending") {
-			multiplier = 1;
+			secondNote = firstNote + (randomSemitone - 1);
 		} else if (intervalProp === "descending") {
-			multiplier = -1;
+			secondNote = firstNote - (randomSemitone - 1);
 		} else if (intervalProp === "both") {
-			multiplier = Math.random() < 0.5 ? 1 : -1;
+			const multiplier = Math.random() < 0.5 ? 1 : -1;
+			secondNote = firstNote + (randomSemitone - 1) * multiplier;
 		}
-		const secondNote = firstNote + (randomSemitone - 1) * multiplier;
 		setCurrentNotes([firstNote, secondNote]);
 	}
 
 	//Check if current choice is correct and change the state of the user selections
 	function checkChoice(choice) {
 		const isCorrect =
-			choice === Math.abs(currentNotes[1] - currentNotes[0] + 1);
+			choice === Math.abs(currentNotes[1] - currentNotes[0]) + 1;
 		if (isCorrect) {
 			setCorrectChoice(true);
 		}
@@ -79,6 +79,7 @@ export default function useIntervalTrainer() {
 					? { ..._choice, chosen: isCorrect ? 1 : -1 }
 					: _choice;
 			});
+			console.log(newChoices);
 			return newChoices;
 		});
 		return isCorrect;

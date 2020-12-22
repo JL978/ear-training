@@ -177,7 +177,8 @@ export default function Home() {
 													: "secondary"
 											}
 											disabled={
-												semitone !== currentNotes[1] - currentNotes[0] + 1 &&
+												semitone !==
+													Math.abs(currentNotes[1] - currentNotes[0]) + 1 &&
 												correctChoice
 											}
 											onClick={() => checkChoice(semitone)}
