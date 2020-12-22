@@ -50,7 +50,6 @@ export default function useIntervalTrainer() {
 		//Getting a random semitone value from the array of possible choices
 		const randomIndex = Math.floor(Math.random() * currentChoices.length);
 		const randomSemitone = currentChoices[randomIndex].semitone;
-		console.log(randomSemitone);
 
 		//Setting the 2 notes
 		const firstNote = 35 + Math.floor(Math.random() * 36);
@@ -79,7 +78,6 @@ export default function useIntervalTrainer() {
 					? { ..._choice, chosen: isCorrect ? 1 : -1 }
 					: _choice;
 			});
-			console.log(newChoices);
 			return newChoices;
 		});
 		return isCorrect;
