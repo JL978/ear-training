@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import useIntervalTrainer from "./hooks/useIntervalTrainer";
-
 import {
 	Container,
 	Box,
@@ -17,8 +16,6 @@ import { green, red } from "@material-ui/core/colors";
 
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-
-import { Formik } from "formik";
 
 import { instrument } from "soundfont-player";
 
