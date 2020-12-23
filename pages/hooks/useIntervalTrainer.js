@@ -58,7 +58,7 @@ export default function useIntervalTrainer() {
 			secondNote = firstNote + (randomSemitone - 1);
 		} else if (intervalProp === "descending") {
 			secondNote = firstNote - (randomSemitone - 1);
-		} else if (intervalProp === "both") {
+		} else {
 			const multiplier = Math.random() < 0.5 ? 1 : -1;
 			secondNote = firstNote + (randomSemitone - 1) * multiplier;
 		}

@@ -107,15 +107,25 @@ export default function Home() {
 			clearTimeout(timerRef.current);
 		}
 
-		pianoRef.current.play(currentNotes[0], 2, {
-			duration: 0.8,
-		});
+		if (intervalProp === "harmony") {
+			pianoRef.current.play(currentNotes[0], 2, {
+				duration: 1,
+			});
 
-		timerRef.current = setTimeout(() => {
 			pianoRef.current.play(currentNotes[1], 2, {
+				duration: 1,
+			});
+		} else {
+			pianoRef.current.play(currentNotes[0], 2, {
 				duration: 0.8,
 			});
-		}, 700);
+
+			timerRef.current = setTimeout(() => {
+				pianoRef.current.play(currentNotes[1], 2, {
+					duration: 0.8,
+				});
+			}, 700);
+		}
 	}
 
 	return (
